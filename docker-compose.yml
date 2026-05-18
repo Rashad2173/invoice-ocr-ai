@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: paddleocr_db
+    restart: always
+    environment:
+      POSTGRES_DB: invoice_ai_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2003
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: paddleocr_app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:2003@db:5432/invoice_ai_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tmp:/app/tmp
+      - ./Sonuçlar:/app/Sonuçlar
+      - ./Faturalar:/app/Faturalar
+
+volumes:
+  postgres_data:

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Invoice OCR Demo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/ui/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Invoice OCR</h1>
+        <p class="sub">Fatura görselini yükle → otomatik analiz → sonuçları gör</p>
+      </div>
+      <div class="pill">Auto Detect + OCR</div>
+    </div>
+
+    <div class="grid">
+
+      <!-- Sol: Upload + Preview -->
+      <div class="card">
+        <div class="hd">
+          <div class="t">Görsel</div>
+          <div class="badge">
+            <span class="dot off" id="dot"></span>
+            <span id="sel">Seçilmedi</span>
+          </div>
+        </div>
+
+        <div class="bd">
+          <div class="drop" id="drop">
+            <div class="row">
+              <div class="hint">
+                <b>Sürükle-bırak</b> veya <b>Fotoğraf Ekle</b> butonuna bas.<br />
+                Kamera belgeyi tespit edince <b>otomatik çeker</b>.
+              </div>
+
+              <div class="btns">
+                <button class="ghost" id="addPhoto">Fotoğraf Ekle</button>
+                <button class="primary" id="analyze" disabled>Analiz Et</button>
+                <button class="ghost" id="clear" disabled>Temizle</button>
+              </div>
+            </div>
+
+            <div class="bar" id="bar"><div></div></div>
+
+            <div class="filemeta" id="meta" style="display:none">
+              <span><strong>Dosya:</strong> <span id="fname"></span></span>
+              <span>·</span>
+              <span id="fsize"></span>
+            </div>
+
+            <input id="file" type="file" accept="image/*" />
+          </div>
+
+          <!-- Image panel with tabs -->
+          <div class="img-panel" id="imgPanel" style="margin-top:12px">
+            <div class="img-tabs">
+              <button class="img-tab active" id="tabOrig" onclick="showTab('orig')">Orijinal</button>
+              <button class="img-tab" id="tabEnhanced" onclick="showTab('enhanced')" disabled>İyileştirilmiş</button>
+            </div>
+
+            <div class="img-view" id="imgView">
+              <div class="img-placeholder">
+                <div class="ico">🖼</div>
+                <span>Görsel yükle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sağ: Results -->
+      <div class="card">
+        <div class="hd">
+          <div class="t">Sonuçlar</div>
+          <div class="btns">
+            <button class="ghost" id="copy" disabled>JSON Kopyala</button>
+          </div>
+        </div>
+
+        <div class="bd">
+          <div class="sectionTitle">
+            <div class="label">OCR Çıktısı</div>
+            <div class="badge">
+              <span class="dot off" id="ocrDot"></span>
+              <span id="ocrStatus">Bekleniyor</span>
+            </div>
+          </div>
+
+          <div class="boxes">
+            <div class="box" id="box_firma">
+              <div class="k">Firma</div>
+              <div class="v empty" id="firma">—</div>
+            </div>
+
+            <div class="box" id="box_tur">
+              <div class="k">Fatura Türü</div>
+              <div class="v empty" id="tur">—</div>
+            </div>
+
+            <div class="box" id="box_sozlesme">
+              <div class="k">Sözleşme No</div>
+              <div class="v empty" id="sozlesme">—</div>
+            </div>
+
+            <div class="box" id="box_tesisat">
+              <div class="k">Tesisat No</div>
+              <div class="v empty" id="tesisat">—</div>
+            </div>
+
+            <div class="box" id="box_musteri">
+              <div class="k">Müşteri No</div>
+              <div class="v empty" id="musteri">—</div>
+            </div>
+
+            <div class="box" id="box_fatura_no">
+              <div class="k">Fatura No</div>
+              <div class="v empty" id="fatura_no">—</div>
+            </div>
+
+            <div class="box" id="box_belge_no">
+              <div class="k">Belge No</div>
+              <div class="v empty" id="belge_no">—</div>
+            </div>
+
+            <div class="box" id="box_son_odeme">
+              <div class="k">Son Ödeme</div>
+              <div class="v empty" id="son_odeme">—</div>
+            </div>
+
+            <div class="box" id="box_tutar" style="grid-column:1/-1">
+              <div class="k">Ödenecek Tutar</div>
+              <div class="v big empty" id="tutar">—</div>
+            </div>
+
+            <div class="box info-box" id="box_time">
+              <div class="k">OCR Süresi</div>
+              <div class="v empty" id="ocr_time">—</div>
+            </div>
+
+            <div class="box success-box" id="box_docid">
+              <div class="k">Document ID</div>
+              <div class="v empty" id="document_id">—</div>
+            </div>
+          </div>
+
+          <!-- Debug section -->
+          <div class="debug-wrap" id="debugWrap" style="display:none">
+            <hr class="divider"/>
+
+            <div class="debug-inner" id="debugInner">
+              <div id="rawTextSection" style="display:none">
+                <div class="debug-section-title">OCR Ham Metin</div>
+                <div class="raw-text-box" id="rawText"></div>
+              </div>
+
+              <div id="jsonSection" style="display:none">
+                <div class="debug-section-title">Ham JSON</div>
+                <pre id="out">{}</pre>
+              </div>
+            </div>
+
+            <button class="debug-toggle" id="toggleDebug" onclick="toggleDebug()">
+              <span>Debug / Ham Veri</span>
+              <span id="debugArrow">▼</span>
+            </button>
+          </div>
+
+          <div class="err" id="err"></div>
+
+          <div class="foot">
+            <span>Python backend · PaddleOCR</span>
+            <a href="/docs" target="_blank">API Docs →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Choice Menu -->
+  <div class="sheet" id="choiceSheet">
+    <div class="scard">
+      <div class="shd">
+        <div class="title">Fotoğraf Seç</div>
+        <button class="ghost" id="choiceClose">Kapat</button>
+      </div>
+
+      <div class="sbd">
+        <div class="choice-btns">
+          <button class="choice-btn" id="choiceCamera">
+            <div class="choice-icon">📷</div>
+            <div class="choice-text">
+              <div class="choice-title">Kamera ile Çek</div>
+              <div class="choice-desc">Otomatik belge tespiti ve kırpma</div>
+            </div>
+          </button>
+
+          <button class="choice-btn" id="choiceFile">
+            <div class="choice-icon">📁</div>
+            <div class="choice-text">
+              <div class="choice-title">Dosyalardan Seç</div>
+              <div class="choice-desc">Galeriden veya dosya sisteminden</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Sheet -->
+  <div class="sheet" id="cameraSheet">
+    <div class="scard cam-scard">
+      <div class="shd">
+        <div class="title">Kamera</div>
+        <button class="ghost" id="sClose">Kapat</button>
+      </div>
+
+      <div class="sbd">
+        <div class="cam" id="cam">
+          <video id="video" autoplay playsinline></video>
+          <!-- Overlay buraya JS ile eklenir -->
+        </div>
+
+        <div class="sfoot">
+          <div class="small" id="sInfo">Kamera hazırlanıyor...</div>
+          <button class="primary" id="sSnap">Manuel Çek</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script async src="https://docs.opencv.org/4.7.0/opencv.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ColonelParrot/jscanify@master/src/jscanify.min.js"></script>
+<script src="/ui/app.js"></script>
+</body>
+</html>

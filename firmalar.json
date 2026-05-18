@@ -1,0 +1,386 @@
+[
+  {
+    "canonical_name": "BEDAŞ BOĞAZİÇİ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "BEDAŞ",
+      "Boğaziçi Elektrik",
+      "Boğaziçi Elektrik Dağıtım"
+    ]
+  },
+  {
+    "canonical_name": "AYEDAŞ ANADOLU YAKASI ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "AYEDAŞ",
+      "Anadolu Yakası Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "SEDAŞ SAKARYA ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "SEDAŞ",
+      "Sakarya Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "UEDAŞ ULUDAĞ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "UEDAŞ",
+      "Uludağ Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "GEDİZ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Gediz Elektrik",
+      "GEDZEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "ADM AYDIN DENİZLİ MUĞLA ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "ADM Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "AKDENİZ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Akdeniz Elektrik",
+      "AKEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "TOROSLAR ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Toroslar Elektrik",
+      "TOROSLAR EDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "DİCLE ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Dicle Elektrik",
+      "DEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "ARAS ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Aras Elektrik",
+      "AEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "ÇORUH ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Çoruh Elektrik",
+      "ÇEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "FIRAT ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Fırat Elektrik",
+      "FEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "TRAKYA ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "TREDAŞ",
+      "Trakya Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "YEŞİLIRMAK ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "YEDAŞ",
+      "Yeşilırmak Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "KAYES KAYSERİ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Kayseri Elektrik",
+      "KAYES"
+    ]
+  },
+  {
+    "canonical_name": "BAŞKENT ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "BAŞKENT EDAŞ",
+      "Başkent Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "OSMANGAZİ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "OGEDAŞ",
+      "Osmangazi Elektrik"
+    ]
+  },
+  {
+    "canonical_name": "VAN GOLETİ ELEKTRİK DAĞITIM A.Ş.",
+    "type": "Elektrik",
+    "aliases": [
+      "Van Göleti Elektrik",
+      "VEDAŞ"
+    ]
+  },
+  {
+    "canonical_name": "İGDAŞ İSTANBUL GAZ DAĞITIM SANAYİ VE TİCARET A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "İGDAŞ",
+      "Istanbul Gaz"
+    ]
+  },
+  {
+    "canonical_name": "BAŞKENTGAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Başkentgaz"
+    ]
+  },
+  {
+    "canonical_name": "İZMİRGAZ İZMİR DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "İzmirgaz"
+    ]
+  },
+  {
+    "canonical_name": "BURSAGAZ BURSA ŞEHİRGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Bursagaz"
+    ]
+  },
+  {
+    "canonical_name": "ESGAZ ESKİŞEHİR DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Esgaz"
+    ]
+  },
+  {
+  "canonical_name": "ENERJİSA İSTANBUL ANADOLU YAKASI ELEKTRİK PERAKENDE SATIŞ A.Ş.",
+  "type": "Elektrik",
+  "aliases": ["Enerjisa", "ENERJİSA", "Enerjisa Anadolu", "Enerjisa İstanbul"]
+  },
+  {
+    "canonical_name": "ENERYA ENERJİ A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Enerya",
+      "Enerya Gaz"
+    ]
+  },
+  {
+    "canonical_name": "AKSA DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Aksa Doğalgaz",
+      "AKSA Gaz"
+    ]
+  },
+  {
+    "canonical_name": "PALGAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Palgaz"
+    ]
+  },
+  {
+    "canonical_name": "GAZDAŞ GAZİANTEP DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Gazdaş"
+    ]
+  },
+  {
+    "canonical_name": "KAYSERİGAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Kayserigaz"
+    ]
+  },
+  {
+    "canonical_name": "HAVALİGAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Havaligaz"
+    ]
+  },
+  {
+    "canonical_name": "ÇORUMGAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Çorumgaz"
+    ]
+  },
+  {
+    "canonical_name": "TRAKYA DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Trakya Gaz"
+    ]
+  },
+  {
+    "canonical_name": "EGE GAZ DOĞALGAZ DAĞITIM A.Ş.",
+    "type": "Dogalgaz",
+    "aliases": [
+      "Ege Gaz"
+    ]
+  },
+  {
+    "canonical_name": "İSKİ İSTANBUL SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "İSKİ",
+      "Istanbul Su"
+    ]
+  },
+  {
+    "canonical_name": "ASKİ ANKARA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "ASKİ"
+    ]
+  },
+  {
+    "canonical_name": "İZSU İZMİR SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "İZSU"
+    ]
+  },
+  {
+    "canonical_name": "BUSKİ BURSA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "BUSKİ"
+    ]
+  },
+  {
+    "canonical_name": "KOSKİ KONYA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "KOSKİ"
+    ]
+  },
+  {
+    "canonical_name": "MESKİ MERSİN SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "MESKİ"
+    ]
+  },
+  {
+    "canonical_name": "SASKİ SAKARYA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "SASKİ"
+    ]
+  },
+  {
+    "canonical_name": "ESKİ ESKİŞEHİR SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "ESKİ"
+    ]
+  },
+  {
+    "canonical_name": "ASAT ANTALYA SU VE ATIKSU İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "ASAT"
+    ]
+  },
+  {
+    "canonical_name": "KASKİ KAYSERİ SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "KASKİ"
+    ]
+  },
+  {
+    "canonical_name": "MASKİ MANİSA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "MASKİ"
+    ]
+  },
+  {
+    "canonical_name": "TESKİ TEKİRDAĞ SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "TESKİ"
+    ]
+  },
+  {
+    "canonical_name": "DESKİ DENİZLİ SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "DESKİ"
+    ]
+  },
+  {
+    "canonical_name": "GASKİ GAZİANTEP SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "GASKİ"
+    ]
+  },
+  {
+    "canonical_name": "ŞUSKİ ŞANLIURFA SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "ŞUSKİ"
+    ]
+  },
+  {
+    "canonical_name": "DİSKİ DİYARBAKIR SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "DİSKİ"
+    ]
+  },
+  {
+    "canonical_name": "HASKİ HATAY SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "HASKİ"
+    ]
+  },
+  {
+    "canonical_name": "TASKİ TRABZON SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "TASKİ"
+    ]
+  },
+  {
+    "canonical_name": "SAMSU SAMSUN SU VE KANALİZASYON İDARESİ",
+    "type": "Su",
+    "aliases": [
+      "SAMSU"
+    ]
+  }
+]

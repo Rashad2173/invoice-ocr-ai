@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.vscode/
+.git/
+.gitignore
+*.log
+tmp/
+Sonuçlar/
