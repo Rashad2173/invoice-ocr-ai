@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fatura OCR Sistemi — Sunum Akışı v5</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080d18;
+      --panel: rgba(15, 23, 42, .82);
+      --panel2: rgba(10, 20, 40, .72);
+      --line: rgba(255,255,255,.08);
+      --muted: #64748b;
+      --text: #e2e8f0;
+      --cyan: #22d3ee;
+      --violet: #a78bfa;
+      --emerald: #34d399;
+      --amber: #fbbf24;
+      --danger: #fb7185;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(6,182,212,.10), transparent 42%),
+        radial-gradient(circle at 0% 30%, rgba(139,92,246,.08), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      padding: 34px 32px 70px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .48;
+      background-image:
+        linear-gradient(rgba(99,102,241,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    .brand { min-width: 280px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(6,182,212,.10);
+      border: 1px solid rgba(6,182,212,.25);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #67e8f9;
+      margin-bottom: 14px;
+    }
+
+    .badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px rgba(34,211,238,.8);
+    }
+
+    h1 {
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, #e2e8f0 0%, #67e8f9 52%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      max-width: 760px;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .controls {
+      width: min(460px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drop-zone {
+      border: 1px dashed rgba(34,211,238,.36);
+      background: rgba(15,23,42,.74);
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      transition: .25s;
+      min-height: 98px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .drop-zone:hover, .drop-zone.drag {
+      border-color: rgba(34,211,238,.8);
+      box-shadow: 0 0 36px rgba(34,211,238,.10);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(34,211,238,.10);
+      border: 1px solid rgba(34,211,238,.22);
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .drop-zone strong { display: block; font-size: 15px; margin-bottom: 4px; }
+    .drop-zone span { color: #64748b; font-size: 12px; }
+    input[type="file"] { display: none; }
+
+    .button-row { display: flex; gap: 10px; }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 11px 15px;
+      font: 700 12px 'Space Grotesk', sans-serif;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, rgba(34,211,238,.22), rgba(99,102,241,.18));
+      border-color: rgba(34,211,238,.35);
+      color: #cffafe;
+      flex: 1;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .status-box {
+      background: rgba(15,23,42,.72);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .scanner-status {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #64748b;
+    }
+    .scanner-status.ok { color: #34d399; }
+    .scanner-status.warn { color: #fbbf24; }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: #64748b;
+      box-shadow: 0 0 0 rgba(100,116,139,0);
+    }
+
+    .dot.ready { background: var(--emerald); box-shadow: 0 0 10px rgba(52,211,153,.7); }
+    .dot.work { background: var(--amber); box-shadow: 0 0 10px rgba(251,191,36,.7); }
+    .dot.err { background: var(--danger); box-shadow: 0 0 10px rgba(251,113,133,.7); }
+
+    .progress {
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+
+    .progress > div {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--emerald));
+      transition: width .32s ease;
+    }
+
+    .pipeline-grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .step-card {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 520px;
+      overflow: hidden;
+      transition: .28s ease;
+      box-shadow: 0 12px 36px rgba(0,0,0,.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: rgba(255,255,255,.12);
+    }
+
+    .step-card.active {
+      transform: translateY(-3px);
+      border-color: rgba(34,211,238,.48);
+      box-shadow: 0 20px 58px rgba(34,211,238,.11);
+    }
+
+    .step-card.done {
+      border-color: rgba(52,211,153,.24);
+    }
+
+    .step-card.done::after {
+      content: "✓";
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 24px;
+      height: 24px;
+      border-radius: 99px;
+      background: rgba(52,211,153,.18);
+      border: 1px solid rgba(52,211,153,.3);
+      color: #6ee7b7;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .accent-cyan::before { background: linear-gradient(90deg, #06b6d4, #0ea5e9); }
+    .accent-violet::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .accent-amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .accent-emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+
+    .step-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      font: 700 12px 'JetBrains Mono', monospace;
+      color: #cbd5e1;
+    }
+
+    .step-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .step-desc { font-size: 12px; line-height: 1.45; color: #64748b; }
+    .step-icon { font-size: 25px; }
+
+    /* Görsel kutusu: faturayı kırpmaz, ezmez; tamamını kutunun içine sığdırır. */
+    .preview {
+      height: 260px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(6,182,212,.10), transparent 62%),
+        #020617;
+      border: 1px solid rgba(255,255,255,.08);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    /* Dikey/uzun faturalarda kutu otomatik büyür. */
+    .preview.is-portrait { height: 360px; }
+    .preview.is-long-document { height: 430px; }
+
+    .preview img {
+      width: auto !important;
+      height: auto !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      display: block;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.30);
+      background: #fff;
+    }
+
+    .placeholder {
+      color: #334155;
+      font-size: 12px;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .step-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      min-height: 24px;
+      align-items: center;
+    }
+
+    .zoom-hint {
+      margin-left: auto;
+      color: #475569;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      padding: 3px 7px;
+    }
+
+    .tag.ok { color: #6ee7b7; border-color: rgba(16,185,129,.26); background: rgba(16,185,129,.08); }
+    .tag.warn { color: #fcd34d; border-color: rgba(245,158,11,.30); background: rgba(245,158,11,.09); }
+
+    .final-strip {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+    }
+
+    .explain, .mini-json {
+      background: rgba(15,23,42,.74);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .explain h3, .mini-json h3 {
+      color: #67e8f9;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .explain p {
+      color: #94a3b8;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(2,6,23,.88);
+      backdrop-filter: blur(10px);
+    }
+
+    .image-modal.open { display: flex; }
+
+    .image-modal-inner {
+      width: min(96vw, 1200px);
+      height: min(92vh, 920px);
+      background: rgba(15,23,42,.92);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 30px 100px rgba(0,0,0,.45);
+    }
+
+    .image-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .image-modal img {
+      flex: 1;
+      min-height: 0;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+
+
+    /* ===== Ek sunum bölümleri: PaddleOCR + Alternatif Yöntem ===== */
+    .presentation-section {
+      margin-top: 28px;
+      background: rgba(15,23,42,.68);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.18);
+    }
+    .section-kicker { display:flex; align-items:center; gap:12px; margin-bottom:20px; color:#94a3b8; font-size:12px; font-weight:800; letter-spacing:.10em; text-transform:uppercase; }
+    .section-kicker::before, .section-kicker::after { content:""; height:1px; flex:1; background:rgba(255,255,255,.08); }
+    .section-header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:22px; }
+    .section-header h2 { font-size:clamp(24px,3vw,34px); line-height:1.08; letter-spacing:-.02em; color:#e2e8f0; margin-bottom:8px; }
+    .section-header p { color:#94a3b8; line-height:1.55; max-width:760px; font-size:14px; }
+    .section-pill { flex-shrink:0; border-radius:999px; border:1px solid rgba(34,211,238,.26); background:rgba(34,211,238,.08); color:#67e8f9; padding:8px 13px; font:700 11px 'JetBrains Mono', monospace; white-space:nowrap; }
+    .ocr-flow-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:stretch; }
+    .ocr-card { position:relative; min-height:178px; background:rgba(2,6,23,.34); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px; overflow:hidden; transition:.25s ease; }
+    .ocr-card:hover { transform:translateY(-2px); border-color:rgba(34,211,238,.28); box-shadow:0 18px 50px rgba(34,211,238,.07); }
+    .ocr-card::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg,#6366f1,#22d3ee); opacity:.72; }
+    .ocr-card.amber::before { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .ocr-card.green::before { background:linear-gradient(90deg,#10b981,#34d399); }
+    .ocr-card-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .ocr-num { width:26px; height:26px; border-radius:999px; display:grid; place-items:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); color:#cbd5e1; font:800 11px 'JetBrains Mono', monospace; }
+    .ocr-icon { font-size:22px; } .ocr-title { font-size:15px; font-weight:800; color:#e2e8f0; } .ocr-desc { font-size:12px; color:#94a3b8; line-height:1.5; }
+    .code-line { display:inline-block; margin-top:11px; border-radius:8px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); color:#94a3b8; padding:5px 8px; font:700 10px 'JetBrains Mono', monospace; }
+    .field-output-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-top:18px; }
+    .field-tile { background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.075); border-radius:14px; padding:14px 12px; text-align:center; }
+    .field-tile strong { display:block; color:#cbd5e1; font:800 11px 'JetBrains Mono', monospace; margin-bottom:5px; } .field-tile span { color:#64748b; font-size:11px; }
+    .score-box { margin-top:18px; background:rgba(2,6,23,.34); border:1px solid rgba(99,102,241,.18); border-radius:18px; padding:18px; }
+    .score-box h3 { color:#a5b4fc; text-transform:uppercase; letter-spacing:.08em; font-size:12px; margin-bottom:13px; }
+    .score-row { display:grid; grid-template-columns:160px 1fr 42px; align-items:center; gap:12px; margin-bottom:10px; color:#94a3b8; font-size:12px; }
+    .score-track { height:6px; border-radius:999px; background:rgba(255,255,255,.07); overflow:hidden; }
+    .score-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg,#6366f1,#22d3ee); }
+    .alt-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; align-items:stretch; }
+    .alt-step { min-height:155px; background:rgba(2,6,23,.34); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px 14px; text-align:center; position:relative; }
+    .alt-step:not(:last-child)::after { content:"→"; position:absolute; right:-13px; top:50%; transform:translateY(-50%); color:#22d3ee; font:900 18px 'JetBrains Mono', monospace; z-index:2; }
+    .alt-step .big-icon { font-size:28px; margin-bottom:11px; } .alt-step h3 { font-size:14px; color:#e2e8f0; margin-bottom:8px; } .alt-step p { font-size:12px; line-height:1.45; color:#94a3b8; }
+    .alt-note { margin-top:18px; padding:18px; border-radius:18px; border:1px solid rgba(16,185,129,.22); background:linear-gradient(135deg, rgba(16,185,129,.10), rgba(99,102,241,.08)); display:grid; grid-template-columns:1.15fr .85fr; gap:18px; align-items:center; }
+    .alt-note h3 { color:#6ee7b7; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; } .alt-note p { color:#94a3b8; line-height:1.55; font-size:13px; }
+    .hardware-list { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; } .hardware-list span { border-radius:999px; border:1px solid rgba(255,255,255,.09); background:rgba(255,255,255,.05); padding:7px 10px; color:#cbd5e1; font:800 11px 'JetBrains Mono', monospace; }
+    @media (max-width:1050px){ .ocr-flow-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .field-output-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .alt-flow{grid-template-columns:1fr;} .alt-step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-17px;transform:translateX(-50%);} .alt-note{grid-template-columns:1fr;} .hardware-list{justify-content:flex-start;} }
+    @media (max-width:720px){ .presentation-section{padding:18px;border-radius:20px;} .section-header{flex-direction:column;} .ocr-flow-grid,.field-output-grid{grid-template-columns:1fr;} .score-row{grid-template-columns:1fr;gap:6px;} }
+
+    @media (max-width: 1250px) {
+      .pipeline-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 1100px) {
+      .topbar { flex-direction: column; align-items: stretch; }
+      .controls { width: 100%; }
+      .final-strip { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 22px 14px 44px; }
+      .pipeline-grid { grid-template-columns: 1fr; }
+      .step-card { min-height: 500px; }
+      .preview, .preview.is-portrait, .preview.is-long-document { height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="topbar">
+      <div class="brand">
+        <div class="badge">OpenCV · jscanify · PaddleOCR</div>
+        <h1>Fatura OCR Görüntü Akışı — Adım Adım Görsel</h1>
+        <p class="subtitle">
+          Sunum için: Her kutuda o adımdan çıkan gerçek görüntü gösterilir. Belge tespiti kutusunda artık overlay değil, kırpılmış/perspective düzeltilmiş fatura görünür.
+        </p>
+      </div>
+
+      <div class="controls">
+        <div class="drop-zone" id="dropZone">
+          <div class="upload-icon">📄</div>
+          <div>
+            <strong>Fatura görseli yükle</strong>
+            <span>JPG / PNG / WEBP — sürükle bırak veya tıkla</span>
+          </div>
+          <input id="fileInput" type="file" accept="image/*" />
+        </div>
+
+        <div class="button-row">
+          <button class="primary" id="runBtn" disabled>Akışı Tekrar Çalıştır</button>
+          <button id="resetBtn" disabled>Temizle</button>
+        </div>
+
+        <div class="status-box">
+          <div class="status-line"><span id="statusDot" class="dot"></span><span id="statusText">Görsel bekleniyor</span></div>
+          <div id="scannerStatus" class="scanner-status">OpenCV / jscanify hazırlanıyor...</div>
+          <div class="progress"><div id="progressBar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pipeline-grid">
+      <article class="step-card accent-cyan" data-step="original">
+        <div class="step-head">
+          <span class="step-num">0</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Orijinal Görüntü</div>
+            <div class="step-desc">Kameradan veya dosyadan gelen ham fatura görüntüsü.</div>
+          </div>
+          <span class="step-icon">🖼️</span>
+        </div>
+        <div class="preview" id="preview-original"><div class="placeholder">Henüz görsel yüklenmedi</div></div>
+        <div class="step-meta" id="meta-original"></div>
+      </article>
+
+      <article class="step-card accent-cyan" data-step="detect">
+        <div class="step-head">
+          <span class="step-num">1</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Belge Tespiti / Crop</div>
+            <div class="step-desc">Dört köşe bulunur ve bu kutuda overlay değil, kırpılmış/perspective düzeltilmiş fatura gösterilir.</div>
+          </div>
+          <span class="step-icon">🔎</span>
+        </div>
+        <div class="preview" id="preview-detect"><div class="placeholder">Belge tespiti bekleniyor</div></div>
+        <div class="step-meta" id="meta-detect"></div>
+      </article>
+
+      <article class="step-card accent-cyan" data-step="orientation">
+        <div class="step-head">
+          <span class="step-num">2</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Yön Düzeltme</div>
+            <div class="step-desc">Yan çekilmiş belgede 90° adaylar denenir, metin yoğunluğuyla doğru yön seçilir.</div>
+          </div>
+          <span class="step-icon">🔄</span>
+        </div>
+        <div class="preview" id="preview-orientation"><div class="placeholder">Yön düzeltme bekleniyor</div></div>
+        <div class="step-meta" id="meta-orientation"></div>
+      </article>
+
+      <article class="step-card accent-violet" data-step="upscale">
+        <div class="step-head">
+          <span class="step-num">3</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Upscale</div>
+            <div class="step-desc">Genişlik 1800 px altındaysa yüksek kaliteyle büyütülür.</div>
+          </div>
+          <span class="step-icon">🔍</span>
+        </div>
+        <div class="preview" id="preview-upscale"><div class="placeholder">Upscale bekleniyor</div></div>
+        <div class="step-meta" id="meta-upscale"></div>
+      </article>
+
+      <article class="step-card accent-violet" data-step="gray">
+        <div class="step-head">
+          <span class="step-num">4</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Grayscale</div>
+            <div class="step-desc">Renk kanalları kaldırılır; OCR için tek kanal sade görüntü oluşur.</div>
+          </div>
+          <span class="step-icon">⬛</span>
+        </div>
+        <div class="preview" id="preview-gray"><div class="placeholder">Grayscale bekleniyor</div></div>
+        <div class="step-meta" id="meta-gray"></div>
+      </article>
+
+      <article class="step-card accent-violet" data-step="bilateral">
+        <div class="step-head">
+          <span class="step-num">5</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Bilateral Filter</div>
+            <div class="step-desc">Gürültü azaltılırken yazı kenarları korunur.</div>
+          </div>
+          <span class="step-icon">🌫️</span>
+        </div>
+        <div class="preview" id="preview-bilateral"><div class="placeholder">Bilateral bekleniyor</div></div>
+        <div class="step-meta" id="meta-bilateral"></div>
+      </article>
+
+      <article class="step-card accent-amber" data-step="clahe">
+        <div class="step-head">
+          <span class="step-num">6</span>
+          <div class="step-title-wrap">
+            <div class="step-title">CLAHE</div>
+            <div class="step-desc">Lokal kontrast artırılır; silik yazılar daha belirgin hale gelir.</div>
+          </div>
+          <span class="step-icon">☀️</span>
+        </div>
+        <div class="preview" id="preview-clahe"><div class="placeholder">CLAHE bekleniyor</div></div>
+        <div class="step-meta" id="meta-clahe"></div>
+      </article>
+
+      <article class="step-card accent-amber" data-step="gaussian">
+        <div class="step-head">
+          <span class="step-num">7</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Gaussian Blur</div>
+            <div class="step-desc">Sharpening öncesi mikro gürültü dengelenir.</div>
+          </div>
+          <span class="step-icon">💨</span>
+        </div>
+        <div class="preview" id="preview-gaussian"><div class="placeholder">Gaussian bekleniyor</div></div>
+        <div class="step-meta" id="meta-gaussian"></div>
+      </article>
+
+      <article class="step-card accent-emerald" data-step="sharpen">
+        <div class="step-head">
+          <span class="step-num">8</span>
+          <div class="step-title-wrap">
+            <div class="step-title">Sharpening / OCR Final</div>
+            <div class="step-desc">Karakter kenarları keskinleşir; PaddleOCR'a gidecek final görüntü oluşur.</div>
+          </div>
+          <span class="step-icon">📤</span>
+        </div>
+        <div class="preview" id="preview-sharpen"><div class="placeholder">Final çıktı bekleniyor</div></div>
+        <div class="step-meta" id="meta-sharpen"></div>
+      </article>
+    </section>
+
+
+    <section class="presentation-section" id="ocrExtractionSection">
+      <div class="section-kicker">02 · OCR ve Alan Çıkarımı</div>
+      <div class="section-header">
+        <div>
+          <h2>Fatura OCR — PaddleOCR Alan Çıkarım Akışı</h2>
+          <p>Görüntü hazırlama adımlarından çıkan final görsel PaddleOCR'a verilir. Modelden gelen metin, koordinat ve confidence değerleri normalize edilerek fatura alanları için adaylar üretilir, skorlanır ve final JSON'a dönüştürülür.</p>
+        </div>
+        <span class="section-pill">PaddleOCR → Resolver → JSON</span>
+      </div>
+      <div class="ocr-flow-grid">
+        <article class="ocr-card"><div class="ocr-card-head"><span class="ocr-num">1</span><span class="ocr-icon">📷</span><div class="ocr-title">PaddleOCR</div></div><div class="ocr-desc">OCR'a final sharpened görüntü gider. Her metin parçası için text, confidence ve bounding box döner.</div><span class="code-line">ocr.ocr(final_image)</span></article>
+        <article class="ocr-card"><div class="ocr-card-head"><span class="ocr-num">2</span><span class="ocr-icon">📦</span><div class="ocr-title">OCRItem Listesi</div></div><div class="ocr-desc">Her çıktı satırı text · confidence · x1 · y1 · x2 · y2 · cx · cy formatında standart objeye çevrilir.</div><span class="code-line">OCRItem[]</span></article>
+        <article class="ocr-card"><div class="ocr-card-head"><span class="ocr-num">3</span><span class="ocr-icon">🔤</span><div class="ocr-title">Metin Normalizasyonu</div></div><div class="ocr-desc">Türkçe karakter, boşluk, noktalama ve büyük/küçük harf farkları temizlenir. Regex ve fuzzy eşleşme daha stabil çalışır.</div><span class="code-line">Ş→S · Ğ→G · İ→I</span></article>
+        <article class="ocr-card amber"><div class="ocr-card-head"><span class="ocr-num">4</span><span class="ocr-icon">🏢</span><div class="ocr-title">Firma Tespiti</div></div><div class="ocr-desc">Enerjisa, İSKİ, İGDAŞ gibi firmalar alias ve anahtar kelime eşleşmeleriyle belirlenir. Fatura türü de buradan güçlenir.</div><span class="code-line">firmalar.json alias</span></article>
+        <article class="ocr-card amber"><div class="ocr-card-head"><span class="ocr-num">5</span><span class="ocr-icon">🔍</span><div class="ocr-title">Alan Adayları</div></div><div class="ocr-desc">Sözleşme no, tesisat no, müşteri no, fatura no, tutar ve son ödeme tarihi için birden fazla aday oluşturulur.</div><span class="code-line">FieldCandidate[]</span></article>
+        <article class="ocr-card amber"><div class="ocr-card-head"><span class="ocr-num">6</span><span class="ocr-icon">🎯</span><div class="ocr-title">Değer Bulma</div></div><div class="ocr-desc">Etiketin sağı, altı ve yakın satırları taranır. Para, tarih ve numara patternleri ile yanlış adaylar elenir.</div><span class="code-line">right · below · regex</span></article>
+        <article class="ocr-card green"><div class="ocr-card-head"><span class="ocr-num">7</span><span class="ocr-icon">🧹</span><div class="ocr-title">Context Temizleme</div></div><div class="ocr-desc">KDV, sayaç, önceki dönem, tüketim gibi yanlış bağlama sahip değerler ayıklanır. Fuzzy matching OCR hatalarını tolere eder.</div><span class="code-line">bad_context_filter()</span></article>
+        <article class="ocr-card green"><div class="ocr-card-head"><span class="ocr-num">8</span><span class="ocr-icon">⚖️</span><div class="ocr-title">Güven Skoru</div></div><div class="ocr-desc">Etiket benzerliği, OCR confidence, konum yakınlığı ve değer formatı birleştirilerek 0–1 arası skor üretilir.</div><span class="code-line">combined_field_score()</span></article>
+        <article class="ocr-card green"><div class="ocr-card-head"><span class="ocr-num">9</span><span class="ocr-icon">📤</span><div class="ocr-title">Resolver + JSON</div></div><div class="ocr-desc">Çakışan adaylar çözülür. En güvenilir alanlar abone bilgileri, ödeme bilgileri ve firma bilgisi olarak JSON'a yazılır.</div><span class="code-line">resolve_field_candidates()</span></article>
+      </div>
+      <div class="score-box"><h3>Güven Skoru Bileşenleri</h3>
+        <div class="score-row"><span>Etiket benzerliği</span><div class="score-track"><div class="score-fill" style="width:35%"></div></div><strong>35%</strong></div>
+        <div class="score-row"><span>Değer OCR confidence</span><div class="score-track"><div class="score-fill" style="width:25%"></div></div><strong>25%</strong></div>
+        <div class="score-row"><span>Etiket OCR confidence</span><div class="score-track"><div class="score-fill" style="width:15%"></div></div><strong>15%</strong></div>
+        <div class="score-row"><span>Konum yakınlığı</span><div class="score-track"><div class="score-fill" style="width:15%"></div></div><strong>15%</strong></div>
+        <div class="score-row" style="margin-bottom:0"><span>Değer uzunluğu / format</span><div class="score-track"><div class="score-fill" style="width:10%"></div></div><strong>10%</strong></div>
+      </div>
+      <div class="field-output-grid">
+        <div class="field-tile"><strong>firma_ismi</strong><span>ENERJİSA / İSKİ / İGDAŞ</span></div><div class="field-tile"><strong>fatura_turu</strong><span>elektrik · su · doğalgaz</span></div><div class="field-tile"><strong>sozlesme_no</strong><span>1004764611</span></div><div class="field-tile"><strong>tesisat_no</strong><span>4004552337</span></div><div class="field-tile"><strong>musteri_no</strong><span>203579742</span></div><div class="field-tile"><strong>fatura_no</strong><span>2TB2025000482119</span></div><div class="field-tile"><strong>belge_no</strong><span>varsa okunur</span></div><div class="field-tile"><strong>son_odeme_tarihi</strong><span>12.12.2025</span></div><div class="field-tile"><strong>tutar</strong><span>380,00 TL</span></div><div class="field-tile"><strong>ocr_time</strong><span>saniye bazlı ölçüm</span></div>
+      </div>
+    </section>
+
+    <section class="presentation-section" id="alternativeSection">
+      <div class="section-kicker">03 · Alternatif Yöntem</div>
+      <div class="section-header"><div><h2>Alternatif Yöntem — PaddleOCR + Qwen 7B</h2><p>PaddleOCR ile çıkarılan aday alanlar, faturanın görseliyle birlikte Qwen 7B VLM tarafına gönderilir. Model görsel bağlamı kontrol ederek hatalı eşleşmeleri onaylar, düzeltir veya boş bırakır.</p></div><span class="section-pill">AI Validation Layer</span></div>
+      <div class="alt-flow">
+        <article class="alt-step"><div class="big-icon">🧾</div><h3>Final Görsel</h3><p>Ön işlemden geçmiş fatura görüntüsü VLM'e bağlam olarak verilir.</p></article>
+        <article class="alt-step"><div class="big-icon">📦</div><h3>OCR Adayları</h3><p>PaddleOCR sonucundaki etiket-değer adayları liste halinde hazırlanır.</p></article>
+        <article class="alt-step"><div class="big-icon">🧠</div><h3>Qwen 7B Kontrol</h3><p>Model görsel üzerindeki alanları ve OCR adaylarını karşılaştırır.</p></article>
+        <article class="alt-step"><div class="big-icon">✅</div><h3>Doğrulama</h3><p>Yanlış alan eşleşmeleri düzeltilir, güveni düşük alanlar boş bırakılır.</p></article>
+        <article class="alt-step"><div class="big-icon">{ }</div><h3>Final JSON</h3><p>Kullanıcıya OCR + VLM doğrulamasından geçmiş sonuç döner.</p></article>
+      </div>
+      <div class="alt-note"><div><h3>Sunum Mesajı</h3><p>Klasik OCR pipeline hızlıdır ve çoğu alanı doğrudan çıkarır. Alternatif Qwen 7B katmanı ise özellikle OCR'ın yanlış eşleştirdiği veya konumdan emin olamadığı alanlarda ikinci kontrol mekanizması gibi çalışır.</p></div><div class="hardware-list"><span>16–24 GB VRAM</span><span>RTX 3090</span><span>RTX 4090</span><span>A100</span><span>Qwen 7B VLM</span></div></div>
+    </section>
+
+  </main>
+
+  <div class="image-modal" id="imageModal" aria-hidden="true">
+    <div class="image-modal-inner">
+      <div class="image-modal-head">
+        <span id="imageModalTitle">Görsel</span>
+        <button id="imageModalClose" type="button">Kapat</button>
+      </div>
+      <img id="imageModalImg" alt="Büyük önizleme">
+    </div>
+  </div>
+
+  <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jscanify/1.4.0/jscanify.min.js"
+          onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/ColonelParrot/jscanify@master/src/jscanify.min.js';document.head.appendChild(s);"></script>
+  <script src="fatura_pipeline_sunum_app_v5_safe.js"></script>
+</body>
+</html>
